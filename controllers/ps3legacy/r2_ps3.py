@@ -264,7 +264,7 @@ if not args.dryrun:
         drive = SabertoothPacketSerial(address=int(_config.get('Drive', 'address')),
                                        type=_config.get('Drive', 'type'),
                                        port=_config.get('Drive', 'port'),
-                                       legacy=true)
+                                       legacy=True)
     elif _config.get('Drive', 'type') == "ODrive":
         print("***** Using ODRIVE for main drive ***** ")
         print("finding an odrive...")
@@ -287,7 +287,7 @@ if not args.dryrun:
     dome = SabertoothPacketSerial(address=int(_config.get('Dome', 'address')),
                                   type=_config.get('Dome', 'type'),
                                   port=_config.get('Dome', 'port'),
-                                  legacy=true)
+                                  legacy=True)
 
 pygame.display.init()
 
@@ -523,7 +523,10 @@ while joystick:
                 if not args.dryrun:
                     if __debug__:
                         print("Not a drytest")
-                    dome.driveCommand(clamp(event.value, -0.99, 0.99))
+                    if abs(event.value) > deadband:
+                        dome.driveCommand(clamp(event.value, -0.99, 0.99))
+                    else:
+                        dome.driveCommand(0)
                 if args.curses:
                     locate("                   ", 35, 8)
                     locate('%10f' % (event.value), 35, 8)
